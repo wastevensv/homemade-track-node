@@ -112,16 +112,13 @@ LIB_OBJS := $(LIB_C_FILES:.c=.o) $(LIB_CPP_FILES:.cpp=.o)
 
 all: $(TARGET).hex
 
-$(TARGET).elf: libs/$(LOWER_MCU).a $(OBJS) $(MCU_LD)
-	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS) libs/$(LOWER_MCU).a
-
-libs/$(LOWER_MCU).a: $(LIB_OBJS) Makefile
-	$(AR) $(ARFLAGS) $@ $(LIB_OBJS)
+$(TARGET).elf: $(LIB_OBJS) $(OBJS) $(MCU_LD)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIB_OBJS) $(LIBS)
 
 %.o: %.c Makefile
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $^ -o $@
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 %.o: %.cpp Makefile
-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -o $@ $<
 
 %.hex: %.elf
 	$(SIZE) $<
