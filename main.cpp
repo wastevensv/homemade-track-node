@@ -29,18 +29,78 @@
  */
 
 #include "WProgram.h"
+#include "Bounce2.h"
+
+#define UP_PIN 2
+#define DN_PIN 4
+#define RT_PIN 5
+#define LT_PIN 3
+#define LC_PIN 6
+#define RC_PIN 7
+#define LED_PIN 13
+
+Bounce upBtn = Bounce(UP_PIN, 10);
+Bounce dnBtn = Bounce(DN_PIN, 10);
+Bounce rtBtn = Bounce(RT_PIN, 10);
+Bounce ltBtn = Bounce(LT_PIN, 10);
+Bounce lcBtn = Bounce(LC_PIN, 10);
+Bounce rcBtn = Bounce(RC_PIN, 10);
 
 extern "C" int main(void) {
-	pinMode(13, OUTPUT);
-	pinMode(6, INPUT);
+	pinMode(UP_PIN, INPUT);
+	pinMode(DN_PIN, INPUT);
+	pinMode(RT_PIN, INPUT);
+	pinMode(LT_PIN, INPUT);
+	pinMode(LC_PIN, INPUT);
+	pinMode(RC_PIN, INPUT);
+
+	pinMode(LED_PIN, OUTPUT);
+
 	while (1)
 	{
-		if(digitalRead(6) == HIGH)
+		upBtn.update();
+		dnBtn.update();
+		rtBtn.update();
+		ltBtn.update();
+		lcBtn.update();
+		rcBtn.update();
+
+		if(upBtn.read() == LOW)
 		{
-			digitalWriteFast(13, HIGH);
-			delay(500);
-			digitalWriteFast(13, LOW);
-			delay(500);
+			Mouse.move(1,0);
+		}
+
+		if(dnBtn.read() == LOW)
+		{
+			Mouse.move(-1,0);
+		}
+
+		if(rtBtn.read() == LOW)
+		{
+			Mouse.move(0,-1);
+		}
+
+		if(ltBtn.read() == LOW)
+		{
+			Mouse.move(0,1);
+		}
+
+		if(lcBtn.fallingEdge())
+		{
+			Mouse.press(MOUSE_LEFT);
+		}
+		if(lcBtn.risingEdge())
+		{
+			Mouse.release(MOUSE_LEFT);
+		}
+
+		if(rcBtn.fallingEdge())
+		{
+			Mouse.press(MOUSE_RIGHT);
+		}
+		if(rcBtn.risingEdge())
+		{
+			Mouse.release(MOUSE_RIGHT);
 		}
 	}
 }
